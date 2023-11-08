@@ -1,6 +1,6 @@
 import { ID, Query } from 'appwrite';
-import { appwriteConfig, account, avatars, databases } from './config';
-import { NewUserInterface } from '@/types';
+import { appwriteConfig, account, avatars, databases, storage } from './config';
+import { NewUserInterface, PostInterface } from '@/types';
 
 export const saveUserToDB = async (user: {
   accountId: string;
@@ -23,7 +23,6 @@ export const saveUserToDB = async (user: {
 };
 
 export const createUserAccount = async (user: NewUserInterface) => {
-  console.log('Create user: ', user);
   try {
     const newAccount = await account.create(
       ID.unique(),
@@ -94,6 +93,85 @@ export const signOutAccount = async () => {
   try {
     const session = await account.deleteSession('current');
     return session;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const uploadFile = async (file: File) => {
+  try {
+    const uploadedFile = await storage.createFile(
+      appwriteConfig.storageId,
+      ID.unique(),
+      file
+    );
+    return uploadedFile;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getPreviewFile = async (fileId: string) => {
+  try {
+    const fileUrl = await storage.getFilePreview(
+      appwriteConfig.storageId,
+      fileId,
+      2000,
+      2000,
+      'top',
+      100
+    );
+    return fileUrl;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteFile = async (fileId: string) => {
+  try {
+    await storage.deleteFile(appwriteConfig.storageId, fileId);
+    return { status: 'ok' };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const createPost = async (post: PostInterface) => {
+  try {
+    // Upload file to appwrite storage
+    const uploadedFile = await uploadFile(post.file[0]);
+    if (!uploadedFile) throw Error;
+    // Get file url
+    const fileUrl = await getPreviewFile(uploadedFile.$id);
+    if (!fileUrl) {
+      await deleteFile(uploadedFile.$id);
+      throw Error;
+    }
+    console.log(fileUrl);
+    // Convert tags to an array
+    const tags = post.tags?.replace(/ /g, '').split(',') || [];
+
+    // Create Post
+    const newPost = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      ID.unique(),
+      {
+        creator: post.userId,
+        caption: post.caption,
+        location: post.location,
+        imageUrl: fileUrl,
+        imageId: uploadedFile.$id,
+        tags,
+      }
+    );
+
+    if (!newPost) {
+      await deleteFile(uploadedFile.$id);
+      throw Error;
+    }
+
+    return newPost;
   } catch (error) {
     console.log(error);
   }

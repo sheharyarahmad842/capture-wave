@@ -13,3 +13,11 @@ export type UserInterface = {
   imageUrl: string;
   bio: string;
 };
+
+export type PostInterface = {
+  userId: string;
+  caption: string;
+  file: File[];
+  location: string;
+  tags?: string;
+};
