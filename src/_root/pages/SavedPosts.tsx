@@ -1,0 +1,29 @@
+import { GridPostList } from '@/components/shared';
+import { useUserContext } from '@/hooks/useUserContext';
+import { useGetSavedPostsQuery } from '@/lib/react-query/queriesAndMutations';
+import { Loader } from 'lucide-react';
+
+const SavedPosts = () => {
+  const { user } = useUserContext();
+  const { data: savedPosts, isLoading } = useGetSavedPostsQuery(user.id);
+  console.log(savedPosts);
+  return isLoading ? (
+    <Loader />
+  ) : (
+    <div className='flex flex-1'>
+      <div className='flex flex-col flex-1 items-center gap-8 max-w-5xl w-full px-5 py-10 md:px-8 lg:p-14 overflow-scroll custom-scrollbar'>
+        <div className='flex gap-2 items-center justify-start w-full'>
+          <img src='/assets/icons/save.svg' alt='Save' width={36} height={36} />
+          <h3 className='font-bold text-[24px] md:text-[30px] leading-[140%] tracking-tight'>
+            Saved Posts
+          </h3>
+        </div>
+        <div className='w-full'>
+          <GridPostList posts={savedPosts?.documents} showStats={false} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SavedPosts;

@@ -12,6 +12,7 @@ import {
   signOutAccount,
   updatePost,
   deletePost,
+  getSavedPosts,
 } from '../appwrite/api';
 import { NewUserInterface, PostInterface, UpdatePostInterface } from '@/types';
 import { QUERY_KEYS } from './queryKeys';
@@ -140,5 +141,12 @@ export const useDeleteSavePostMutation = () => {
         queryKey: [QUERY_KEYS.GET_CURRENT_USER],
       });
     },
+  });
+};
+
+export const useGetSavedPostsQuery = (userId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_RECENT_POSTS, userId],
+    queryFn: () => getSavedPosts(userId),
   });
 };

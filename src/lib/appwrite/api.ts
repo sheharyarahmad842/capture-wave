@@ -314,3 +314,18 @@ export const deleteSavedPost = async (savedRecordId: string) => {
     console.log(error);
   }
 };
+
+export const getSavedPosts = async (userId: string) => {
+  if (!userId) return;
+  console.log(userId);
+  try {
+    const savedPosts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.savesCollectionId,
+      [Query.equal('user', [userId])]
+    );
+    return savedPosts;
+  } catch (error) {
+    console.log(error);
+  }
+};

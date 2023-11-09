@@ -2,7 +2,13 @@ import { Routes, Route } from 'react-router-dom';
 import AuthLayout from './_auth/AuthLayout';
 import SignInForm from './_auth/forms/SignInForm';
 import SignUpForm from './_auth/forms/SignUpForm';
-import { Home, CreatePost, UpdatePost, PostDetails } from './_root/pages';
+import {
+  Home,
+  CreatePost,
+  UpdatePost,
+  PostDetails,
+  SavedPosts,
+} from './_root/pages';
 import RootLayout from './_root/RootLayout';
 import { Toaster } from '@/components/ui/toaster';
 
@@ -19,6 +25,7 @@ const App = () => {
         <Route element={<RootLayout />}>
           <Route index path='/' element={<Home />} />
           <Route path='/create-post' element={<CreatePost />} />
+          <Route path='/saved' element={<SavedPosts />} />
           <Route path='/update-post/:id' element={<UpdatePost />} />
           <Route path='/posts/:id' element={<PostDetails />} />
         </Route>
