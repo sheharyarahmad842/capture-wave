@@ -21,3 +21,13 @@ export type PostInterface = {
   location: string;
   tags?: string;
 };
+
+export type UpdatePostInterface = {
+  postId: string;
+  caption: string;
+  location?: string;
+  file: File[];
+  tags?: string;
+  imageUrl: URL;
+  imageId: string;
+};

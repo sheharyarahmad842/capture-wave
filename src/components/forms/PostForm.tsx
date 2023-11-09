@@ -15,7 +15,10 @@ import { Textarea } from '../ui/textarea';
 import { FileUploader } from '../shared';
 import { PostValidation } from '@/lib/validation';
 import { Models } from 'appwrite';
-import { useCreatePostMutation } from '@/lib/react-query/queriesAndMutations';
+import {
+  useCreatePostMutation,
+  useUpdatePostMutation,
+} from '@/lib/react-query/queriesAndMutations';
 import { useUserContext } from '@/hooks/useUserContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../ui/use-toast';
@@ -23,10 +26,14 @@ import { Loader } from 'lucide-react';
 
 type PostFormProps = {
   post?: Models.Document;
+  action: 'Create' | 'Update';
 };
 
-const PostForm = ({ post }: PostFormProps) => {
-  const { mutateAsync: createPost, isLoading } = useCreatePostMutation();
+const PostForm = ({ post, action }: PostFormProps) => {
+  const { mutateAsync: createPost, isLoading: isCreateLoading } =
+    useCreatePostMutation();
+  const { mutateAsync: updatePost, isLoading: isUpdateLoading } =
+    useUpdatePostMutation();
   const { user } = useUserContext();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -42,11 +49,27 @@ const PostForm = ({ post }: PostFormProps) => {
   });
 
   // 2. Define a submit handler.
-  const handleSubmit = async (post: z.infer<typeof PostValidation>) => {
+  const handleSubmit = async (value: z.infer<typeof PostValidation>) => {
     try {
+      // Update Post
+      if (post && action === 'Update') {
+        const updatedPost = await updatePost({
+          ...value,
+          postId: post.$id,
+          imageUrl: post.imageUrl,
+          imageId: post.imageId,
+        });
+        if (!updatedPost) {
+          toast({
+            title: 'Please try again',
+          });
+          return;
+        }
+        return navigate(`/posts/${post.$id}`);
+      }
       const newPost = await createPost({
         userId: user.id,
-        ...post,
+        ...value,
       });
       if (!newPost) toast({ title: 'Please try again' });
       navigate('/');
@@ -123,6 +146,7 @@ const PostForm = ({ post }: PostFormProps) => {
             variant='default'
             type='button'
             className='bg-dark-4 text-light-1 h-12 px-5 flex gap-2'
+            onClick={() => navigate(-1)}
           >
             Cancel
           </Button>
@@ -130,9 +154,9 @@ const PostForm = ({ post }: PostFormProps) => {
             variant='default'
             type='submit'
             className='bg-primary-500 text-light-1 px-5 h-12 flex gap-1 items-center'
-            disabled={isLoading}
+            disabled={isCreateLoading || isUpdateLoading}
           >
-            {isLoading && <Loader />} Submit
+            {isCreateLoading || (isUpdateLoading && <Loader />)} {action} Submit
           </Button>
         </div>
       </form>

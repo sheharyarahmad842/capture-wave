@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Models } from 'appwrite';
 import {
   useDeleteSavePostMutation,
@@ -10,7 +10,7 @@ import { useGetCurrentAccountQuery } from '@/lib/react-query/queriesAndMutations
 import Loader from './Loader';
 
 type PostStatsProps = {
-  post: Models.Document;
+  post?: Models.Document;
   userId: string;
 };
 
@@ -21,13 +21,17 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
     useSavePostMutation();
   const { mutate: deleteSavedPost, isLoading: isDeletePostLoading } =
     useDeleteSavePostMutation();
-  const likesList = post.likes.map((user: Models.Document) => user.$id);
+  const likesList = post?.likes.map((user: Models.Document) => user.$id);
   const [likes, setLikes] = useState(likesList);
   const [isSaved, setIsSaved] = useState(false);
 
   const savedPostRecord = currentUser?.saves.find(
-    (record: Models.Document) => record.post.$id === post.$id
+    (record: Models.Document) => record.post.$id === post?.$id
   );
+
+  useEffect(() => {
+    setIsSaved(!!savedPostRecord);
+  }, [currentUser]);
   const handleLikePost = (e: React.MouseEvent) => {
     e.stopPropagation();
     let newLikes = [...likes];
@@ -38,7 +42,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
       newLikes.push(userId);
     }
     setLikes(newLikes);
-    likePost({ postId: post.$id, likes: newLikes });
+    likePost({ postId: post?.$id || '', likes: newLikes });
   };
 
   const handleSavePost = (e: React.MouseEvent) => {
@@ -48,7 +52,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
       deleteSavedPost(savedPostRecord.$id);
     } else {
       setIsSaved(true);
-      savePost({ postId: post.$id, userId });
+      savePost({ postId: post?.$id || '', userId });
     }
   };
   return (

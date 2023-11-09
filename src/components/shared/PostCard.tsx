@@ -16,7 +16,7 @@ const PostCard = ({ post }: PostCardProps) => {
     <div className='rounded-3xl border border-dark-4 p-5 lg:p-7 bg-dark-2 w-full max-w-screen-sm'>
       <div className='flex justify-between items-center'>
         <div className='flex gap-3'>
-          <Link to={`/profile/${post.creator.id}`}>
+          <Link to={`/posts/${post.creator.id}`}>
             <img
               src={post.creator.imageUrl || '/assets/images/profile.png'}
               className='rounded-full w-12 object-contain'
@@ -43,7 +43,7 @@ const PostCard = ({ post }: PostCardProps) => {
           />
         </Link>
       </div>
-      <Link to={`/post/${post.$id}`}>
+      <Link to={`/posts/${post.$id}`}>
         <div className='py-5'>
           <h3 className='text-light-1 font-semibold'>{post.caption}</h3>
           <ul className='flex items-center gap-1 mt-2'>
