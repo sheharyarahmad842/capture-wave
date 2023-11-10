@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useInfiniteQuery,
+} from 'react-query';
 import {
   createPost,
   createUserAccount,
@@ -13,6 +18,8 @@ import {
   updatePost,
   deletePost,
   getSavedPosts,
+  getInfinitePosts,
+  searchPosts,
 } from '../appwrite/api';
 import { NewUserInterface, PostInterface, UpdatePostInterface } from '@/types';
 import { QUERY_KEYS } from './queryKeys';
@@ -148,5 +155,27 @@ export const useGetSavedPostsQuery = (userId: string) => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_RECENT_POSTS, userId],
     queryFn: () => getSavedPosts(userId),
+  });
+};
+
+export const useGetInfinitePostsQuery = () => {
+  return useInfiniteQuery({
+    queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
+    queryFn: getInfinitePosts as any,
+    getNextPageParam: (lastPage: any) => {
+      if (lastPage && lastPage.documents.length === 0) {
+        return null;
+      }
+      const lastId = lastPage.documents[lastPage.documents.length - 1].$id;
+      return lastId;
+    },
+  });
+};
+
+export const useGetSearchPostsQuery = (searchTerm: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.SEARCH_POSTS, searchTerm],
+    queryFn: () => searchPosts(searchTerm),
+    enabled: !!searchTerm,
   });
 };

@@ -15,18 +15,18 @@ const GridPostList = ({
   showUser = true,
 }: GridPostListProps) => {
   const { user } = useUserContext();
+  console.log(posts);
   return (
     <div className='grid grid-cols-1 xl:grid-cols-3 gap-7 w-full'>
-      {posts.map((item) => {
-        const post = item.post;
+      {posts?.map((item) => {
         return (
           <div className='relative min-w-80 h-80'>
             <Link
-              to={`/posts/${post.$id}`}
+              to={`/posts/${item.$id}`}
               className='flex rounded-[24px] cursor-pointer overflow-hidden w-full h-full border-dark-4 border'
             >
               <img
-                src={post.imageUrl}
+                src={item.imageUrl}
                 alt='Post Image'
                 className='w-full h-full object-cover'
               />
@@ -35,16 +35,16 @@ const GridPostList = ({
               {showUser && (
                 <div className='flex items-center gap-2'>
                   <img
-                    src={post.creator.imageUrl}
+                    src={item.creator.imageUrl}
                     alt='User Image'
                     className='w-6 h-6 object-contain rounded-full'
                   />
                   <p className='text-light-1 font-semilbold text-[14px] line-clamp-1'>
-                    {post.creator.name}
+                    {item.creator.name}
                   </p>
                 </div>
               )}
-              {showStats && <PostStats post={post} userId={user.id} />}
+              {showStats && <PostStats post={item} userId={user.id} />}
             </div>
           </div>
         );

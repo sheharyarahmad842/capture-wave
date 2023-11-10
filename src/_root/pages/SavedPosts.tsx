@@ -1,12 +1,21 @@
+import { useState, useEffect } from 'react';
 import { GridPostList } from '@/components/shared';
 import { useUserContext } from '@/hooks/useUserContext';
 import { useGetSavedPostsQuery } from '@/lib/react-query/queriesAndMutations';
 import { Loader } from 'lucide-react';
+import { Models } from 'appwrite';
 
 const SavedPosts = () => {
   const { user } = useUserContext();
   const { data: savedPosts, isLoading } = useGetSavedPostsQuery(user.id);
+  const [posts, setPosts] = useState<Models.Document[]>([]);
   console.log(savedPosts);
+  useEffect(() => {
+    if (savedPosts) {
+      const filteredPosts = savedPosts.documents.map((item) => item.post);
+      setPosts(filteredPosts);
+    }
+  }, [savedPosts]);
   return isLoading ? (
     <Loader />
   ) : (
@@ -19,7 +28,7 @@ const SavedPosts = () => {
           </h3>
         </div>
         <div className='w-full'>
-          <GridPostList posts={savedPosts?.documents} showStats={false} />
+          <GridPostList posts={posts} showStats={false} />
         </div>
       </div>
     </div>
