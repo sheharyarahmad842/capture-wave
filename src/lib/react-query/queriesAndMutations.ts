@@ -22,6 +22,7 @@ import {
   searchPosts,
   getUser,
   updateUser,
+  getUsers,
 } from '../appwrite/api';
 import {
   NewUserInterface,
@@ -60,6 +61,13 @@ export const useGetCurrentAccountQuery = () => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_CURRENT_USER],
     queryFn: getCurrentUser,
+  });
+};
+
+export const useGetUsersQuery = (userId: string, limit?: number) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_USERS],
+    queryFn: () => getUsers(userId, limit),
   });
 };
 

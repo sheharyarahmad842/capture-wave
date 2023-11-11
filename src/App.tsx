@@ -11,6 +11,7 @@ import {
   Explore,
   Profile,
   EditProfile,
+  AllUsers,
 } from './_root/pages';
 import RootLayout from './_root/RootLayout';
 import { Toaster } from '@/components/ui/toaster';
@@ -30,6 +31,7 @@ const App = () => {
           <Route path='/create-post' element={<CreatePost />} />
           <Route path='/saved' element={<SavedPosts />} />
           <Route path='/explore' element={<Explore />} />
+          <Route path='/all-users' element={<AllUsers />} />
           <Route path='/update-post/:id' element={<UpdatePost />} />
           <Route path='/posts/:id' element={<PostDetails />} />
           <Route path='/profile/:id' element={<Profile />} />

@@ -17,7 +17,9 @@ const SavedPosts = () => {
     }
   }, [savedPosts]);
   return isLoading ? (
-    <Loader />
+    <div className='flex justify-center items-center w-full h-full'>
+      <Loader />
+    </div>
   ) : (
     <div className='flex flex-1'>
       <div className='flex flex-col flex-1 items-center gap-8 max-w-5xl w-full px-5 py-10 md:px-8 lg:p-14 overflow-scroll custom-scrollbar'>

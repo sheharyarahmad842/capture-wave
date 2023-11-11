@@ -6,6 +6,7 @@ import SavedPosts from './SavedPosts';
 import Explore from './Explore';
 import Profile from './Profile';
 import EditProfile from './EditProfile';
+import AllUsers from './AllUsers';
 
 export {
   Home,
@@ -16,4 +17,5 @@ export {
   Explore,
   Profile,
   EditProfile,
+  AllUsers,
 };

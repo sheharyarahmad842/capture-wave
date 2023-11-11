@@ -7,6 +7,7 @@ import {
   UpdateUserInterface,
   UserInterface,
 } from '@/types';
+import { number } from 'zod';
 
 export const saveUserToDB = async (user: {
   accountId: string;
@@ -114,6 +115,24 @@ export const getUser = async (userId?: string) => {
     );
     if (!user) throw Error;
     return user;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getUsers = async (userId: string, limit?: number) => {
+  try {
+    const users = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [
+        Query.orderDesc('$createdAt'),
+        Query.limit(limit || 10),
+        Query.notEqual('$id', userId),
+      ]
+    );
+    if (!users) throw Error;
+    return users;
   } catch (error) {
     console.log(error);
   }
