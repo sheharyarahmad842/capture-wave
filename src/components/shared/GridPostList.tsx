@@ -33,7 +33,7 @@ const GridPostList = ({
             </Link>
             <div className='absolute bottom-0 flex justify-between items-center p-5 bg-gradient-to-t from-dark-3 to-transparent w-full rounded-b-[24px]'>
               {showUser && (
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-2 w-full'>
                   <img
                     src={item.creator.imageUrl}
                     alt='User Image'

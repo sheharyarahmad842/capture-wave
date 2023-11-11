@@ -56,7 +56,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
     }
   };
   return (
-    <div className='flex justify-between items-center gap-2 mt-5 w-full'>
+    <div className='flex justify-between items-center gap-4'>
       <div className='flex items-center gap-2'>
         <img
           src={
@@ -79,8 +79,8 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
           <img
             src={isSaved ? '/assets/icons/saved.svg' : '/assets/icons/save.svg'}
             alt='Save'
-            width={20}
-            height={20}
+            width={24}
+            height={24}
             className='cursor-pointer'
             onClick={(e) => handleSavePost(e)}
           />

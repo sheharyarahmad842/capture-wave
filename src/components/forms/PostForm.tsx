@@ -156,7 +156,7 @@ const PostForm = ({ post, action }: PostFormProps) => {
             className='bg-primary-500 text-light-1 px-5 h-12 flex gap-1 items-center'
             disabled={isCreateLoading || isUpdateLoading}
           >
-            {isCreateLoading || (isUpdateLoading && <Loader />)} {action} Submit
+            {(isCreateLoading || isUpdateLoading) && <Loader />} {action} Post
           </Button>
         </div>
       </form>

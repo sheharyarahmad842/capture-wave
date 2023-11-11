@@ -57,7 +57,7 @@ const PostCard = ({ post }: PostCardProps) => {
         <img
           src={post.imageUrl || '/assets/images/profile.png'}
           alt='Post Image'
-          className='h-64 xs:h-[400px] lg:h-[450px] w-full rounded-[24px] object-cover'
+          className='h-64 xs:h-[400px] lg:h-[450px] w-full rounded-[24px] object-cover mb-5'
         />
       </Link>
 

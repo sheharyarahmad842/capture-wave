@@ -446,3 +446,21 @@ export const searchPosts = async (searchTerm: string) => {
     console.log(error);
   }
 };
+
+export const getUserPosts = async (userId: string) => {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.postCollectionId,
+      [
+        Query.equal('creator', userId),
+        Query.limit(10),
+        Query.orderDesc('$createdAt'),
+      ]
+    );
+    if (!posts) throw Error;
+    return posts;
+  } catch (error) {
+    console.log(error);
+  }
+};

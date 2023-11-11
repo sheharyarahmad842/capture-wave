@@ -3,16 +3,20 @@ import { Button } from '@/components/ui/button';
 import {
   useGetPostByIdQuery,
   useDeletePostMutation,
+  useGetUserPostsQuery,
 } from '@/lib/react-query/queriesAndMutations';
 import { multiFormatDateString } from '@/lib/utils';
 import { useUserContext } from '@/hooks/useUserContext';
 import Loader from '@/components/shared/Loader';
 import PostStats from '@/components/shared/PostStats';
+import { GridPostList } from '@/components/shared';
 const PostDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { data: post, isLoading } = useGetPostByIdQuery(id);
   const { user } = useUserContext();
+  const { data: post, isLoading } = useGetPostByIdQuery(id);
+  const { data: userPosts, isLoading: isLoadingUserPosts } =
+    useGetUserPostsQuery(user.id);
   const { mutate: deletePost, isLoading: isLoadingDelete } =
     useDeletePostMutation();
 
@@ -21,7 +25,7 @@ const PostDetails = () => {
     return navigate(-1);
   };
   return (
-    <div className='flex flex-col items-center flex-1 py-10 px-5 md:px-8 lg:p-14 overflow-scroll custom-scrollbar'>
+    <div className='flex flex-col items-center gap-10 flex-1 py-10 px-5 md:px-8 lg:p-14 overflow-scroll custom-scrollbar'>
       <div className='hidden md:flex max-w-5xl w-full'>
         <Button
           className='flex gap-4 items-center hover:bg-transparent hover:text-white'
@@ -33,9 +37,11 @@ const PostDetails = () => {
         </Button>
       </div>
       {(isLoading || isLoadingDelete) && !post ? (
-        <Loader />
+        <div className='flex items-center justify-center w-full h-full'>
+          <Loader />
+        </div>
       ) : (
-        <div className='max-w-5xl w-full bg-dark-2 rounded-[30px] flex flex-col xl:flex-row border border-dark-4 mt-10'>
+        <div className='max-w-5xl w-full bg-dark-2 rounded-[30px] flex flex-col xl:flex-row border border-dark-4'>
           <img
             src={post?.imageUrl}
             alt='Post Image'
@@ -100,6 +106,19 @@ const PostDetails = () => {
               <PostStats post={post} userId={user.id} />
             </div>
           </div>
+        </div>
+      )}
+      <hr className='border w-full border-dark-4/80' />
+      {userPosts?.documents.length > 0 && (
+        <div className='flex flex-col gap-5 w-full max-w-5xl'>
+          <h3 className='font-semibold text-[20px] lg:text-[24px] text-light-1'>
+            Related Posts
+          </h3>
+          {isLoadingUserPosts ? (
+            <Loader />
+          ) : (
+            <GridPostList posts={userPosts?.documents} />
+          )}
         </div>
       )}
     </div>

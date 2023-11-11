@@ -85,7 +85,7 @@ const Explore = () => {
             <GridPostList
               posts={item.documents}
               key={index}
-              showStats={false}
+              // showStats={false}
             />
           ))
         )}

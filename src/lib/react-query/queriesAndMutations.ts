@@ -23,6 +23,7 @@ import {
   getUser,
   updateUser,
   getUsers,
+  getUserPosts,
 } from '../appwrite/api';
 import {
   NewUserInterface,
@@ -212,5 +213,13 @@ export const useGetSearchPostsQuery = (searchTerm: string) => {
     queryKey: [QUERY_KEYS.SEARCH_POSTS, searchTerm],
     queryFn: () => searchPosts(searchTerm),
     enabled: !!searchTerm,
+  });
+};
+
+export const useGetUserPostsQuery = (userId: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_USER_POSTS, userId],
+    queryFn: () => getUserPosts(userId),
+    enabled: !!userId,
   });
 };
