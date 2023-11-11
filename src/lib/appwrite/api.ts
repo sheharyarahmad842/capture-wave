@@ -1,6 +1,12 @@
 import { ID, Query } from 'appwrite';
 import { appwriteConfig, account, avatars, databases, storage } from './config';
-import { NewUserInterface, PostInterface, UpdatePostInterface } from '@/types';
+import {
+  NewUserInterface,
+  PostInterface,
+  UpdatePostInterface,
+  UpdateUserInterface,
+  UserInterface,
+} from '@/types';
 
 export const saveUserToDB = async (user: {
   accountId: string;
@@ -93,6 +99,63 @@ export const signOutAccount = async () => {
   try {
     const session = await account.deleteSession('current');
     return session;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getUser = async (userId?: string) => {
+  if (!userId) return;
+  try {
+    const user = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      userId
+    );
+    if (!user) throw Error;
+    return user;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateUser = async (user: UpdateUserInterface) => {
+  const hasFileToUpdate = user.file.length > 0;
+  try {
+    let image = { imageUrl: user.imageUrl, imageId: user.imageId };
+    if (hasFileToUpdate) {
+      const uploadedFile = await uploadFile(user.file[0]);
+      if (!uploadedFile) throw Error;
+      const fileUrl = getPreviewFile(uploadedFile.$id);
+      if (!fileUrl) {
+        await deleteFile(uploadedFile.$id);
+        throw Error;
+      }
+      image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id };
+    }
+    const updatedUser = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      user.userId,
+      {
+        name: user.name,
+        bio: user.bio,
+        imageId: image.imageId,
+        imageUrl: image.imageUrl,
+      }
+    );
+
+    if (!updatedUser) {
+      if (hasFileToUpdate) {
+        await deleteFile(image.imageId);
+      }
+      throw Error;
+    }
+
+    if (updatedUser && hasFileToUpdate) {
+      await deleteFile(user.imageId);
+    }
+    return updatedUser;
   } catch (error) {
     console.log(error);
   }
@@ -207,7 +270,6 @@ export const getPostById = async (postId?: string) => {
 
 export const updatePost = async (post: UpdatePostInterface) => {
   const hasFileToUpdate = post.file.length > 0;
-  console.log(hasFileToUpdate);
   try {
     let image = { imageUrl: post.imageUrl, imageId: post.imageId };
     if (hasFileToUpdate) {

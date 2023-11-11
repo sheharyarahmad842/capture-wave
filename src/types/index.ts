@@ -14,6 +14,15 @@ export type UserInterface = {
   bio: string;
 };
 
+export type UpdateUserInterface = {
+  userId: string;
+  name: string;
+  imageId: string;
+  imageUrl: URL | string;
+  bio: string;
+  file: File[];
+};
+
 export type PostInterface = {
   userId: string;
   caption: string;

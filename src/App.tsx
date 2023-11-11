@@ -9,6 +9,8 @@ import {
   PostDetails,
   SavedPosts,
   Explore,
+  Profile,
+  EditProfile,
 } from './_root/pages';
 import RootLayout from './_root/RootLayout';
 import { Toaster } from '@/components/ui/toaster';
@@ -30,6 +32,8 @@ const App = () => {
           <Route path='/explore' element={<Explore />} />
           <Route path='/update-post/:id' element={<UpdatePost />} />
           <Route path='/posts/:id' element={<PostDetails />} />
+          <Route path='/profile/:id' element={<Profile />} />
+          <Route path='/edit-profile/:id' element={<EditProfile />} />
         </Route>
       </Routes>
       <Toaster />

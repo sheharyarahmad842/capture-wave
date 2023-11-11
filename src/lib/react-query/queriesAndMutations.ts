@@ -20,8 +20,15 @@ import {
   getSavedPosts,
   getInfinitePosts,
   searchPosts,
+  getUser,
+  updateUser,
 } from '../appwrite/api';
-import { NewUserInterface, PostInterface, UpdatePostInterface } from '@/types';
+import {
+  NewUserInterface,
+  PostInterface,
+  UpdatePostInterface,
+  UpdateUserInterface,
+} from '@/types';
 import { QUERY_KEYS } from './queryKeys';
 
 export const useCreateUserAccountMutation = () => {
@@ -41,10 +48,30 @@ export const useSignOutAccountMutation = () => {
   return useMutation({ mutationFn: signOutAccount });
 };
 
+export const useGetUserQuery = (userId?: string) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_USER_BY_ID, userId],
+    queryFn: () => getUser(userId),
+    enabled: !!userId,
+  });
+};
+
 export const useGetCurrentAccountQuery = () => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_CURRENT_USER],
     queryFn: getCurrentUser,
+  });
+};
+
+export const useUpdateUserMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (user: UpdateUserInterface) => updateUser(user),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_BY_ID, data?.$id],
+      });
+    },
   });
 };
 
