@@ -65,8 +65,8 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
               : '/assets/icons/like.svg'
           }
           alt='Like'
-          width={20}
-          height={20}
+          width={24}
+          height={24}
           onClick={(e) => handleLikePost(e)}
           className='cursor-pointer'
         />

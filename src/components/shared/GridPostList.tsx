@@ -7,15 +7,16 @@ type GridPostListProps = {
   posts: Models.Document[];
   showStats?: boolean;
   showUser?: boolean;
+  width?: boolean;
 };
 
 const GridPostList = ({
   posts,
+  width = false,
   showStats = true,
   showUser = true,
 }: GridPostListProps) => {
   const { user } = useUserContext();
-  console.log(posts);
   return (
     <div className='grid grid-cols-1 xl:grid-cols-3 gap-7 w-full'>
       {posts?.map((item) => {
@@ -44,7 +45,9 @@ const GridPostList = ({
                   </p>
                 </div>
               )}
-              {showStats && <PostStats post={item} userId={user.id} />}
+              <div className={`${width}` && 'w-full'}>
+                {showStats && <PostStats post={item} userId={user.id} />}
+              </div>
             </div>
           </div>
         );
