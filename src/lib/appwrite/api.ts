@@ -119,7 +119,7 @@ export const getUser = async (userId?: string) => {
 };
 
 export const getUsers = async (userId: string, limit?: number) => {
-  const queries: any[] = [
+  const queries = [
     Query.orderDesc('$createdAt'),
     Query.notEqual('$id', userId),
   ];

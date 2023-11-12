@@ -43,14 +43,6 @@ const ProfileForm = () => {
     useUpdateUserMutation();
   const { data: currentUser } = useGetUserQuery(id || '');
 
-  // if (!currentUser) {
-  //   return (
-  //     <div className='flex justify-center items-center w-full h-full'>
-  //       <Loader />
-  //     </div>
-  //   );
-  // }
-
   // 2. Define a submit handler.
   const handleSubmit = async (value: z.infer<typeof ProfileValidation>) => {
     try {
@@ -59,7 +51,7 @@ const ProfileForm = () => {
         name: value.name,
         file: value.file,
         bio: value.bio,
-        userId: currentUser?.$id,
+        userId: currentUser?.$id || '',
         imageUrl: currentUser?.imageUrl,
         imageId: currentUser?.imageId,
       });
