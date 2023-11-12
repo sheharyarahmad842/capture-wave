@@ -5,9 +5,7 @@ import {
   PostInterface,
   UpdatePostInterface,
   UpdateUserInterface,
-  UserInterface,
 } from '@/types';
-import { number } from 'zod';
 
 export const saveUserToDB = async (user: {
   accountId: string;
@@ -121,15 +119,18 @@ export const getUser = async (userId?: string) => {
 };
 
 export const getUsers = async (userId: string, limit?: number) => {
+  const queries: any[] = [
+    Query.orderDesc('$createdAt'),
+    Query.notEqual('$id', userId),
+  ];
+  if (limit) {
+    queries.push(Query.limit(limit));
+  }
   try {
     const users = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
-      [
-        Query.orderDesc('$createdAt'),
-        Query.limit(limit || 10),
-        Query.notEqual('$id', userId),
-      ]
+      queries
     );
     if (!users) throw Error;
     return users;
@@ -460,6 +461,39 @@ export const getUserPosts = async (userId: string) => {
     );
     if (!posts) throw Error;
     return posts;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const followUser = async (followerId: string, followedId: string) => {
+  console.log('Follower Id: ', followerId);
+  console.log('Followed Id: ', followedId);
+  try {
+    const user = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.followersCollectionId,
+      ID.unique(),
+      { follower: followerId, followed: followedId }
+    );
+    console.log('User: ', user);
+    if (!user) throw Error;
+    return user;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteFollower = async (savedRecordId: string) => {
+  console.log('ID', savedRecordId);
+  try {
+    const statusCode = await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.followersCollectionId,
+      savedRecordId
+    );
+    if (!statusCode) throw Error;
+    return { status: 'ok' };
   } catch (error) {
     console.log(error);
   }

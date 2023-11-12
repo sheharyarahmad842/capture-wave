@@ -1,23 +1,52 @@
+import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
+  useDeleteFollowerMutation,
+  useFollowUserMutation,
+  useGetCurrentAccountQuery,
   useGetUserQuery,
-  useGetUserPostsQuery,
 } from '@/lib/react-query/queriesAndMutations';
-import { useUserContext } from '@/hooks/useUserContext';
 import { Button } from '@/components/ui/button';
 import { GridPostList } from '@/components/shared';
-import Loader from '@/components/shared/Loader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Loader from '@/components/shared/Loader';
+import { Models } from 'appwrite';
 
 const Profile = () => {
+  const [isFollowed, setIsFollowed] = useState(false);
   const { id } = useParams();
-  const { user } = useUserContext();
-  const { data: currentUser, isLoading } = useGetUserQuery(id);
-  const { data: userPosts, isLoading: isLoadingUserPosts } =
-    useGetUserPostsQuery(user.id);
-  console.log('Current User', currentUser?.liked);
-  console.log('User Posts', userPosts?.documents);
-  return isLoading || isLoadingUserPosts ? (
+  const { data: user } = useGetCurrentAccountQuery();
+  const { data: currentUser, isLoading, isFetched } = useGetUserQuery(id);
+  const { mutateAsync: followUser, isLoading: isLoadingFollowUser } =
+    useFollowUserMutation();
+  const { mutateAsync: deleteFollower, isLoading: isLoadingDeleteFollower } =
+    useDeleteFollowerMutation();
+  const savedFollowerRecord = user?.followees.find(
+    (record: Models.Document) => record.followed.$id === currentUser?.$id
+  );
+  useEffect(() => {
+    if (isFetched && savedFollowerRecord) {
+      setIsFollowed(true);
+    }
+  }, [savedFollowerRecord, isFetched]);
+  const handleFollow = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      if (savedFollowerRecord) {
+        setIsFollowed(false);
+        await deleteFollower(savedFollowerRecord.$id);
+      } else {
+        setIsFollowed(true);
+        await followUser({
+          followerId: user?.$id || '',
+          followedId: currentUser?.$id || '',
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return isLoading ? (
     <div className='flex justify-center items-center w-full h-full'>
       <Loader />
     </div>
@@ -43,7 +72,7 @@ const Profile = () => {
             <div className='flex items-center justify-center mt-10 gap-8 xl:justify-start flex-wrap'>
               <div className='flex justify-center items-center gap-2'>
                 <p className='text-primary-500 text-sm font-semibold lg:text-base lg:font-bold'>
-                  11
+                  {currentUser?.posts.length}
                 </p>
                 <p className='text-light-2 text-[15px] font-semibold lg:text-base'>
                   Posts
@@ -51,33 +80,40 @@ const Profile = () => {
               </div>
               <div className='flex justify-center items-center gap-2'>
                 <p className='text-primary-500 text-sm font-semibold lg:text-base lg:font-bold'>
-                  11
+                  {currentUser?.followers.length}
                 </p>
                 <p className='text-light-2 text-[15px] font-semibold lg:text-base'>
-                  Posts
+                  Followers
                 </p>
               </div>
               <div className='flex justify-center items-center gap-2'>
                 <p className='text-primary-500 text-sm font-semibold lg:text-base lg:font-bold'>
-                  11
+                  {currentUser?.followees.length}
                 </p>
                 <p className='text-light-2 text-[15px] font-semibold lg:text-base'>
-                  Posts
+                  Following
                 </p>
               </div>
             </div>
           </div>
         </div>
-        {currentUser?.$id !== user.id ? (
+        {currentUser?.$id !== user?.id ? (
           <Button
             variant='default'
             className='bg-primary-500 text-light-1 text-sm rounded-md px-8 py-4'
+            onClick={(e) => handleFollow(e)}
           >
-            Follow
+            {isLoadingFollowUser || isLoadingDeleteFollower ? (
+              <Loader />
+            ) : isFollowed ? (
+              'Following'
+            ) : (
+              'Follow'
+            )}
           </Button>
         ) : (
           <Link
-            to={`/edit-profile/${currentUser.$id}`}
+            to={`/edit-profile/${user?.$id}`}
             className='flex justify-center items-center gap-2 bg-dark-4 px-5 h-12 rounded-lg text-light-1'
           >
             <img
@@ -120,7 +156,7 @@ const Profile = () => {
         </TabsList>
         <TabsContent value='posts'>
           <GridPostList
-            posts={userPosts?.documents}
+            posts={currentUser?.posts}
             width={true}
             showUser={false}
           />

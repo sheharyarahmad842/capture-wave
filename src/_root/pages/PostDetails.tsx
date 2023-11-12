@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import {
   useGetPostByIdQuery,
   useDeletePostMutation,
-  useGetUserPostsQuery,
+  useGetUserQuery,
 } from '@/lib/react-query/queriesAndMutations';
 import { multiFormatDateString } from '@/lib/utils';
 import { useUserContext } from '@/hooks/useUserContext';
@@ -15,8 +15,9 @@ const PostDetails = () => {
   const { id } = useParams();
   const { user } = useUserContext();
   const { data: post, isLoading } = useGetPostByIdQuery(id);
-  const { data: userPosts, isLoading: isLoadingUserPosts } =
-    useGetUserPostsQuery(user.id);
+  const { data: currentUser, isLoading: isLoadingUser } = useGetUserQuery(
+    user.id
+  );
   const { mutate: deletePost, isLoading: isLoadingDelete } =
     useDeletePostMutation();
 
@@ -109,15 +110,15 @@ const PostDetails = () => {
         </div>
       )}
       <hr className='border w-full border-dark-4/80' />
-      {userPosts?.documents.length > 0 && (
+      {currentUser?.posts.length > 0 && (
         <div className='flex flex-col gap-5 w-full max-w-5xl'>
           <h3 className='font-semibold text-[20px] lg:text-[24px] text-light-1'>
             Related Posts
           </h3>
-          {isLoadingUserPosts ? (
+          {isLoadingUser ? (
             <Loader />
           ) : (
-            <GridPostList posts={userPosts?.documents} />
+            <GridPostList posts={currentUser?.posts} />
           )}
         </div>
       )}

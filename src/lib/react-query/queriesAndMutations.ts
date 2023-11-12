@@ -24,6 +24,8 @@ import {
   updateUser,
   getUsers,
   getUserPosts,
+  followUser,
+  deleteFollower,
 } from '../appwrite/api';
 import {
   NewUserInterface,
@@ -221,5 +223,32 @@ export const useGetUserPostsQuery = (userId: string) => {
     queryKey: [QUERY_KEYS.GET_USER_POSTS, userId],
     queryFn: () => getUserPosts(userId),
     enabled: !!userId,
+  });
+};
+
+export const useFollowUserMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      followerId,
+      followedId,
+    }: {
+      followerId: string;
+      followedId: string;
+    }) => followUser(followerId, followedId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_USER_BY_ID] }),
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_USERS] });
+    },
+  });
+};
+export const useDeleteFollowerMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (savedRecordId: string) => deleteFollower(savedRecordId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_USER_BY_ID] }),
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_USERS] });
+    },
   });
 };
