@@ -343,11 +343,12 @@ export const deletePost = async (postId?: string, imageId?: string) => {
       appwriteConfig.postCollectionId,
       postId
     );
+
     if (!statusCode) throw Error;
 
     await deleteFile(imageId);
 
-    return { status: 'ok' };
+    return { status: 'Ok' };
   } catch (error) {
     console.log(error);
   }

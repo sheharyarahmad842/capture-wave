@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import {
   useGetPostByIdQuery,
   useDeletePostMutation,
-  useGetUserQuery,
+  useGetUserPostsQuery,
 } from '@/lib/react-query/queriesAndMutations';
 import { multiFormatDateString } from '@/lib/utils';
 import { useUserContext } from '@/hooks/useUserContext';
@@ -15,15 +15,16 @@ const PostDetails = () => {
   const { id } = useParams();
   const { user } = useUserContext();
   const { data: post, isLoading } = useGetPostByIdQuery(id);
-  const { data: currentUser, isLoading: isLoadingUser } = useGetUserQuery(
-    user.id
+  const { data: posts, isLoading: isLoadingPosts } = useGetUserPostsQuery(
+    post?.creator.$id
   );
-  const { mutate: deletePost, isLoading: isLoadingDelete } =
-    useDeletePostMutation();
-
+  const { mutate: deletePost } = useDeletePostMutation();
+  const relatedPosts = posts?.documents.filter(
+    (userPost) => userPost.$id !== id
+  );
   const handleDeletePost = () => {
     deletePost({ postId: id, imageId: post?.imageId });
-    return navigate(-1);
+    navigate(-1);
   };
   return (
     <div className='flex flex-col items-center gap-10 flex-1 py-10 px-5 md:px-8 lg:p-14 overflow-scroll custom-scrollbar'>
@@ -37,7 +38,7 @@ const PostDetails = () => {
           <p className='font-semibold text-base'>Back</p>
         </Button>
       </div>
-      {(isLoading || isLoadingDelete) && !post ? (
+      {isLoading || !post ? (
         <div className='flex items-center justify-center w-full h-full'>
           <Loader />
         </div>
@@ -110,16 +111,12 @@ const PostDetails = () => {
         </div>
       )}
       <hr className='border w-full border-dark-4/80' />
-      {currentUser?.posts.length > 0 && (
+      {posts?.documents.length > 0 && (
         <div className='flex flex-col gap-5 w-full max-w-5xl'>
           <h3 className='font-semibold text-[20px] lg:text-[24px] text-light-1'>
             Related Posts
           </h3>
-          {isLoadingUser ? (
-            <Loader />
-          ) : (
-            <GridPostList posts={currentUser?.posts} />
-          )}
+          {isLoadingPosts ? <Loader /> : <GridPostList posts={relatedPosts} />}
         </div>
       )}
     </div>

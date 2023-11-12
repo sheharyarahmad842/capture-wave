@@ -77,8 +77,12 @@ const SignUpForm = () => {
   return (
     <Form {...form}>
       <div className='flex flex-col justify-center items-center sm:w-420'>
-        <img src='/assets/images/logo.svg' alt='Logo' />
-        <h2 className='mt-5 sm:mt-8 font-bold text-[24px] md:text-[30px] tracking-tighter'>
+        <img
+          src='/assets/images/logo.svg'
+          alt='Logo'
+          className='w-[250px] h-[80px] max-md:w-[200px] max-md:[h-60px] object-contain'
+        />
+        <h2 className='mt-2 font-bold text-[24px] md:text-[30px] tracking-tighter'>
           Create a new account
         </h2>
         <p className='text-[14px] font-medium md:text-[16px] text-light-3 mt-2 mb-4 '>

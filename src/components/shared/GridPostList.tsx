@@ -7,12 +7,12 @@ type GridPostListProps = {
   posts: Models.Document[];
   showStats?: boolean;
   showUser?: boolean;
-  width?: boolean;
+  containerStyles?: string;
 };
 
 const GridPostList = ({
   posts,
-  width = false,
+  containerStyles,
   showStats = true,
   showUser = true,
 }: GridPostListProps) => {
@@ -21,7 +21,7 @@ const GridPostList = ({
     <div className='grid grid-cols-1 xl:grid-cols-3 gap-7 w-full'>
       {posts?.map((item) => {
         return (
-          <div className='relative min-w-80 h-80'>
+          <div className='relative min-w-80 h-80' key={item.$id}>
             <Link
               to={`/posts/${item.$id}`}
               className='flex rounded-[24px] cursor-pointer overflow-hidden w-full h-full border-dark-4 border'
@@ -45,7 +45,7 @@ const GridPostList = ({
                   </p>
                 </div>
               )}
-              <div className={`${width}` && 'w-full'}>
+              <div className={containerStyles}>
                 {showStats && <PostStats post={item} userId={user.id} />}
               </div>
             </div>

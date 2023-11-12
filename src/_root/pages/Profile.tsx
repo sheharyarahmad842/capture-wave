@@ -157,16 +157,12 @@ const Profile = () => {
         <TabsContent value='posts'>
           <GridPostList
             posts={currentUser?.posts}
-            width={true}
+            containerStyles='w-full'
             showUser={false}
           />
         </TabsContent>
         <TabsContent value='liked'>
-          <GridPostList
-            posts={currentUser?.liked}
-            width={true}
-            showStats={false}
-          />
+          <GridPostList posts={currentUser?.liked} showStats={false} />
         </TabsContent>
       </Tabs>
     </div>

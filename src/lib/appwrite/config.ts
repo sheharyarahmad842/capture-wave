@@ -9,7 +9,6 @@ export const appwriteConfig = {
   postCollectionId: import.meta.env.VITE_APPWRITE_POST_COLLECTION_ID,
   savesCollectionId: import.meta.env.VITE_APPWRITE_SAVES_COLLECTION_ID,
   followersCollectionId: import.meta.env.VITE_APPWRITE_FOLLOWERS_COLLECTION_ID,
-  followingCollectionId: import.meta.env.VITE_APPWRITE_FOLLOWING_COLLECTION_ID,
 };
 
 const client = new Client();
@@ -17,7 +16,6 @@ client.setEndpoint(appwriteConfig.url);
 client.setProject(appwriteConfig.projectId);
 
 export const account = new Account(client);
-console.log(account);
 export const databases = new Databases(client);
 export const storage = new Storage(client);
 export const avatars = new Avatars(client);
