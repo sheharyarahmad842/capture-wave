@@ -111,7 +111,7 @@ const PostDetails = () => {
         </div>
       )}
       <hr className='border w-full border-dark-4/80' />
-      {posts?.documents.length > 0 && (
+      {posts.documents.length > 0 && (
         <div className='flex flex-col gap-5 w-full max-w-5xl'>
           <h3 className='font-semibold text-[20px] lg:text-[24px] text-light-1'>
             Related Posts
