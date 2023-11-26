@@ -9,8 +9,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { GridPostList } from '@/components/shared';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Loader from '@/components/shared/Loader';
 import { Models } from 'appwrite';
+import Loader from '@/components/shared/Loader';
 
 const Profile = () => {
   const [isFollowed, setIsFollowed] = useState(false);
@@ -24,6 +24,7 @@ const Profile = () => {
   const savedFollowerRecord = user?.followees.find(
     (record: Models.Document) => record.followed.$id === currentUser?.$id
   );
+
   useEffect(() => {
     if (isFetched && savedFollowerRecord) {
       setIsFollowed(true);
@@ -51,7 +52,7 @@ const Profile = () => {
       <Loader />
     </div>
   ) : (
-    <div className='w-full max-w-5xl flex flex-col gap-10 overflow-scroll custom-scrollbar px-5 md:p-14 py-10'>
+    <div className='w-full max-w-6xl flex flex-col gap-10 overflow-scroll custom-scrollbar px-5 md:p-14 py-10'>
       <div className='flex flex-col xl:flex-row items-center xl:items-start gap-8 w-full md:mb-8'>
         <div className='flex flex-col xl:flex-row max-xl:items-center gap-7 flex-1'>
           <img

@@ -468,8 +468,6 @@ export const getUserPosts = async (userId: string) => {
 };
 
 export const followUser = async (followerId: string, followedId: string) => {
-  console.log('Follower Id: ', followerId);
-  console.log('Followed Id: ', followedId);
   try {
     const user = await databases.createDocument(
       appwriteConfig.databaseId,
@@ -486,7 +484,6 @@ export const followUser = async (followerId: string, followedId: string) => {
 };
 
 export const deleteFollower = async (savedRecordId: string) => {
-  console.log('ID', savedRecordId);
   try {
     const statusCode = await databases.deleteDocument(
       appwriteConfig.databaseId,

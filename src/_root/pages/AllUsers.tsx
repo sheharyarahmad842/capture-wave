@@ -7,7 +7,7 @@ const AllUsers = () => {
   const { user } = useUserContext();
   const { data: users, isLoading } = useGetUsersQuery(user.id);
   return (
-    <div className='flex flex-col items-start flex-1 px-5 py-10 md:px-8 lg:p-14 gap-6 md:gap-8 overflow-scroll custom-scrollbar w-full max-w-5xl'>
+    <div className='flex flex-col items-start flex-1 px-5 py-10 md:px-8 lg:p-14 gap-6 md:gap-8 overflow-scroll custom-scrollbar w-full'>
       <h2 className='font-bold text-[24px] lg:text-[30px] text-left w-full mt-5'>
         All Users
       </h2>

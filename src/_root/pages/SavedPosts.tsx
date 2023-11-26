@@ -1,15 +1,22 @@
 import { useState, useEffect } from 'react';
 import { GridPostList } from '@/components/shared';
 import { useUserContext } from '@/hooks/useUserContext';
-import { useGetSavedPostsQuery } from '@/lib/react-query/queriesAndMutations';
+import {
+  useGetSavedPostsQuery,
+  useGetUsersQuery,
+} from '@/lib/react-query/queriesAndMutations';
 import { Loader } from 'lucide-react';
 import { Models } from 'appwrite';
+import UserCard from '@/components/shared/UserCard';
 
 const SavedPosts = () => {
   const { user } = useUserContext();
   const { data: savedPosts, isLoading } = useGetSavedPostsQuery(user.id);
   const [posts, setPosts] = useState<Models.Document[]>([]);
-  console.log(savedPosts);
+  const { data: users, isLoading: isUsersLoading } = useGetUsersQuery(
+    user.id,
+    5
+  );
   useEffect(() => {
     if (savedPosts) {
       const filteredPosts = savedPosts.documents.map((item) => item.post);
@@ -33,6 +40,20 @@ const SavedPosts = () => {
           <GridPostList posts={posts} showStats={false} />
         </div>
       </div>
+      {isUsersLoading ? (
+        <Loader />
+      ) : (
+        <div className='hidden xl:flex h-full w-72 2xl:w-465 px-6 py-10 flex-col gap-10 overflow-scroll custom-scrollbar'>
+          <h3 className='font-bold text-[24px] lg:text[30px] text-light-1'>
+            Top Creators
+          </h3>
+          <div className='grid 2xl:grid-cols-2 gap-6'>
+            {users?.documents.map((user) => (
+              <UserCard user={user} key={user.$id} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
