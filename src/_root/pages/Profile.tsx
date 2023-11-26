@@ -97,7 +97,7 @@ const Profile = () => {
             </div>
           </div>
         </div>
-        {currentUser?.$id !== id ? (
+        {user?.$id !== id ? (
           <Button
             variant='default'
             className='bg-primary-500 text-light-1 text-sm rounded-md px-8 py-4'
